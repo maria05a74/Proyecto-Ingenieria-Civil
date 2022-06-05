@@ -1,0 +1,22 @@
+<h3>Ciudades</h3>
+<MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>
+                CiudadiD
+            </td>
+
+            <td>
+                departamento
+            </td>
+
+            td>
+              Andrea  se aparecio con unos platanos para la comida
+            </td>
+            <td>Editar</td>
+            <td>Eliminar</td>
+        </tr>
+    </thead>
+    <tbody>
