@@ -1,0 +1,181 @@
+﻿@page "/proyectos"
+@using Microsoft.EntityFrameworkCore
+@using proyecto_constructora_web.Model
+@inject IMatToaster Toaster
+
+<h3>Proyectos</h3>
+<MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>
+                ProyectoId
+            </td>
+            <td>
+                NroContrato
+            </td>
+            <td>
+                Nombre
+            </td>
+            
+            <td>
+                Ciudad
+            </td>
+            <td>
+                TipoObra
+            </td>
+            <td>
+                Valor
+            </td>
+            <td>Editar</td>
+            <td>Eliminar</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var proyecto in constructoraDbcontex.proyectos.Include(proyecto => proyecto.TipoObra))
+         
+        {
+            <tr>
+                <td>
+                    @proyecto.ProyectoId
+                </td>
+                <td>
+                    @proyecto.NroContrato
+                </td>
+                <td>
+                    @proyecto.Nombre
+                </td>
+                <td>
+                    @proyecto.Ciudad.Nombre
+                </td>
+                <td>
+                    @proyecto.TipoObra?.Nombre
+                </td>
+                <td>
+                    @proyecto.Valor
+                </td>
+
+                <td>
+                    <button @onclick="()=>ActualizarProyectos(proyecto)">Actualizar</button>
+                </td>
+
+                <td>
+                    <button @onclick="()=>EliminarProyecto(proyecto)">Eliminar</button>
+                </td>
+            </tr>
+
+
+        }
+
+    
+
+
+
+
+    </tbody>
+</table>
+<MatDialog @bind-IsOpen="@dialogIsOpen">
+    <MatDialogTitle>Crear Persona</MatDialogTitle>
+    <MatDialogContent>
+
+        <div class="forum-group">
+            <label for="NroContrato">Nro Contrato</label>
+            <input class="form-control" id="NroContrato" @bind-value="@proyecto.NroContrato" />
+        </div>
+
+        <div class="forum-group">
+            <label for="Nombre">Nombre</label>
+            <input class="form-control" id="Nombre" @bind-value="@proyecto.Nombre" />
+        </div>
+
+        
+
+         <div class="forum-group">
+            <label for="Valor">Ciudad</label>
+            <MatAutocompleteList Items="@constructoraDbcontex.ciudades" CustomStringSelector="@(i => i.Nombre)" @bind-Value="@proyecto.Ciudad" TItem="Ciudad" Label="Seleccione la ciudad">
+                <ItemTemplate>
+                    <div style="display: flex; flex-direction: row; width: 100%;">
+                        <div style="flex: 1;">@context.Nombre</div>
+                    </div>
+                </ItemTemplate>
+            </MatAutocompleteList>
+
+            
+            
+<br />
+<br />
+<br />
+        </div>
+
+
+        <div class="forum-group">
+            <label for="TipoObra">Valor</label>
+            <input class="form-control" id="valor" @bind-value="@proyecto.Valor" />
+        </div>
+
+        <div class="forum-group">
+            <label for="Valor">Tipo Obra</label>
+            <MatAutocompleteList Items="@constructoraDbcontex.tipoObra" CustomStringSelector="@(i => i.Nombre)" @bind-Value="@proyecto.TipoObra" TItem="TipodeObra" Label="Seleccione el tipo de obra">
+                <ItemTemplate>
+                    <div style="display: flex; flex-direction: row; width: 100%;">
+                        <div style="flex: 1;">@context.Nombre</div>
+                    </div>
+                </ItemTemplate>
+            </MatAutocompleteList>
+
+            
+            
+<br />
+<br />
+<br />
+        </div>
+
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; proyecto = new Proyecto(); })">Cancelar</MatButton>
+        <MatButton OnClick="@GuardarProyecto">OK</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+@code {
+    protected bool dialogIsOpen { get; set; }
+
+    [Inject]
+    public ConstructoraDbcontex constructoraDbcontex { get; set; }
+    Proyecto proyecto = new Proyecto();
+    
+
+    protected void GuardarProyecto()
+    {
+        if (proyecto.TipoObra.TipodeObraId < 1)
+        {
+            Toaster.Add("El tipo de obra es obligatorio", MatToastType.Danger, "No es posible guardar el proyecto", "danger");
+            return;
+        }
+
+        if (proyecto.ProyectoId > 0)
+            constructoraDbcontex.proyectos.Update(proyecto);
+        else
+            constructoraDbcontex.proyectos.Add(proyecto);
+
+
+
+        constructoraDbcontex.SaveChanges();
+        dialogIsOpen = false;
+        proyecto = new Proyecto();
+    }
+
+    protected void EliminarProyecto(Proyecto proyecto)
+    {
+        constructoraDbcontex.proyectos.Remove(proyecto);
+        constructoraDbcontex.SaveChanges();
+    }
+
+    protected void ActualizarProyectos(Proyecto PROYECTO)
+    {
+        dialogIsOpen = true;
+        proyecto = PROYECTO;
+        //PROYECTO  es el objeto parámetro ActualizarProyectos(Proyecto PROYECTO)
+    }
+}

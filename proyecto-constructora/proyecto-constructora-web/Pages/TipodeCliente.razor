@@ -1,0 +1,113 @@
+﻿
+@page "/TipodeCliente"
+@using proyecto_constructora_web.Model
+
+<h3>Tipos de Cliente</h3>
+<MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
+        
+<table class="table">
+    <thead>
+        <tr>
+            <td>
+                TipoClienteId
+            </td>
+            <td>
+                Nombre
+            </td>
+            <td>Eliminar</td>
+
+            <td>Eliminar</td>
+            
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tipoCliente in constructoraDbcontex.tipoClientes)
+        {
+            <tr>
+                <td>
+                    @tipoCliente.TipoClienteId
+                </td>
+                <td>
+                    @tipoCliente.Nombre
+                </td>
+                <td>
+                    <button @onclick="()=>ActualizarTipodeCliente(tipoCliente)">Actualizar</button>
+                </td>
+
+               <td>
+                    <button @onclick="()=>EliminarTipoCliente(tipoCliente)">Eliminar</button>
+                </td>
+
+                
+                
+            </tr>
+        }
+    </tbody>
+</table>
+<MatDialog @bind-IsOpen="@dialogIsOpen">
+    <MatDialogTitle>Crear Persona</MatDialogTitle>
+    <MatDialogContent>
+
+<div class ="forum-group">
+    <label for = "Nombre"> Nombre</label>
+    <input class = "form-control" id="Nueva" @bind-value = "@tipoCliente.Nombre" /> 
+</div>
+
+</MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; tipoCliente = new TipoDeCliente(); })">Cancelar</MatButton>
+        <MatButton OnClick="@GuardarTipo">OK</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+
+@*<button id="btnGuardar" @onclick="GuardarTipo">
+    Guardar
+</button>*@
+
+
+<br/>
+<br/>
+<br/>
+
+
+
+@code {
+
+protected bool dialogIsOpen { get; set; }
+
+    [Inject]
+    public ConstructoraDbcontex constructoraDbcontex { get; set; }
+
+    TipoDeCliente  tipoCliente = new TipoDeCliente();
+
+    protected void  GuardarTipo()
+    {
+        if(tipoCliente.TipoClienteId > 0)
+            constructoraDbcontex.tipoClientes.Update(tipoCliente);
+        else
+            constructoraDbcontex.tipoClientes.Add(tipoCliente);
+        
+        constructoraDbcontex.SaveChanges();
+        dialogIsOpen = false;
+       tipoCliente= new TipoDeCliente();
+
+      }
+
+    protected void EliminarTipoCliente(TipoDeCliente  tipoCliente) 
+    {
+        constructoraDbcontex.tipoClientes.Remove(tipoCliente);
+        constructoraDbcontex.SaveChanges();
+ }
+
+ protected void ActualizarTipodeCliente(TipoDeCliente TIPODECLIENTE)
+    {
+        dialogIsOpen = true;
+        tipoCliente = TIPODECLIENTE;
+  // TIPODECLIENTE es el objeto parámetro  ActualizarTipodeCliente(TipoDeCliente TIPODECLIENTE)
+
+    }
+
+}
+

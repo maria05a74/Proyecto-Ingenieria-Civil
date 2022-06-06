@@ -1,0 +1,105 @@
+﻿@page "/Departamentos"
+@using Microsoft.EntityFrameworkCore
+@using proyecto_constructora_web.Model
+
+<h3>Departamentos</h3>
+
+<MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>
+                DepartamentoiD
+            </td>
+            <td>
+                Nombre
+            </td>
+            
+            <td>Editar</td>
+            <td>Eliminar</td>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var departamento in constructoraDbcontex.departamentos)
+        {
+            <tr>
+                <td>
+                    @departamento.DepartamentoId
+                </td>
+                <td>
+                    @departamento.Nombre
+                </td>
+                <td>
+                    <button @onclick="()=>ActualizarDepartamento(departamento)">Actualizar</button>
+                </td>
+                <td>
+                    <button @onclick="()=>EliminarTipodeDepartamento(departamento)">Eliminar</button>
+                </td>
+
+                
+            </tr>
+        }
+    </tbody>
+</table>
+
+<MatDialog @bind-IsOpen="@dialogIsOpen">
+    <MatDialogTitle>Crear Persona</MatDialogTitle>
+    <MatDialogContent>
+
+<div class ="forum-group">
+    <label for = "Nueva">Nombre</label>
+    <input class = "form-control" id="Nueva" @bind-value = "@departamento.Nombre" /> 
+</div>
+</MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; departamento = new Departamento(); })">Cancelar</MatButton>
+        <MatButton OnClick="@GuardarDepartamento">OK</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+
+<br/>
+<br/>
+<br/>
+
+
+@code {
+    protected bool dialogIsOpen { get; set; }
+
+    [Inject]
+    public ConstructoraDbcontex constructoraDbcontex { get; set; }
+    Departamento departamento = new Departamento();
+
+    protected void GuardarDepartamento()
+    {
+        if(departamento.DepartamentoId > 0)
+            constructoraDbcontex.departamentos.Update(departamento);
+        else
+            constructoraDbcontex.departamentos.Add(departamento);
+        
+        constructoraDbcontex.SaveChanges();
+        dialogIsOpen = false;
+        departamento = new Departamento();
+    }
+
+    protected void EliminarTipodeDepartamento(Departamento departamento)
+    {
+        constructoraDbcontex.departamentos.Remove(departamento);
+        constructoraDbcontex.SaveChanges();
+    }
+
+    protected void ActualizarDepartamento(Departamento DEPARTAMENTO)
+    {
+        dialogIsOpen = true;
+        departamento = DEPARTAMENTO;
+    }
+}
+
+
+
+
+
+
+

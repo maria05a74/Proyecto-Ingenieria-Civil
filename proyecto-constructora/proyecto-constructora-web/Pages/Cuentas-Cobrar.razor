@@ -1,0 +1,166 @@
+﻿@page "/CuentasxCobrar"
+@using proyecto_constructora_web.Model
+
+<h3>Cuentas_Cobrar</h3>
+<MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
+  
+<table class="table">
+    <thead>
+        <tr>
+            <td>
+                CuentasporCobrarID
+            </td>
+            <td>
+                Contrato
+            </td>
+            <td>
+                Nombre
+            </td>
+            <td>
+                Valor
+            </td>
+            <td>
+               Abono
+            </td>
+            <td>
+                Saldo
+            </td>
+            <td>Editar</td>
+            <td>Eliminar</td>
+            
+        </tr>
+    </thead
+
+    <tbody>
+        @foreach (var cuentacobrar  in constructoraDbcontex.cuentasporCobrar)
+        {
+            <tr>
+                <td>
+                    @cuentacobrar.CuentasporCobrarId
+                </td>
+                <td>
+                    @cuentacobrar.Contrato
+                </td>
+                <td>
+                    @cuentacobrar.Nombre
+                </td>
+                <td>
+                    @cuentacobrar.Valor
+                </td>
+                <td>
+                    @cuentacobrar.Abono
+                </td>
+                <td>
+                    @cuentacobrar.Saldo
+                </td>
+               <td>
+                    <button @onclick="()=>ActualizarCuentasCobrar(cuentacobrar)">Actualizar</button>
+                </td>
+
+                <td>
+                    <button @onclick="()=>EliminarCuenta(cuentacobrar)">Eliminar</button>
+                </td>
+
+
+            </tr>
+        }
+    </tbody>
+</table>
+<MatDialog @bind-IsOpen="@dialogIsOpen">
+    <MatDialogTitle>Crear Cuenta</MatDialogTitle>
+    <MatDialogContent>
+
+
+<div class ="forum-group">
+    <label for = "Contrato">Contrato</label>
+<input class = "form-control" id="Contrato" @bind-value = "@cuentacobrar.Contrato" />
+</div>
+
+<div class ="forum-group">
+    <label for = "nombre"> Nombre </label>
+<input class = "form-control" id="Nombre" @bind-value = "@cuentacobrar.Nombre" /> 
+</div>
+
+<div class ="forum-group">
+    <label for = "Valor"> Valor </label>
+<input class = "form-control" id="Valor" @bind-value = "@cuentacobrar.Valor" /> 
+</div>
+
+<div class ="forum-group">
+    <label for = "Abono">Abono</label>
+<input class = "form-control" id="Abono" @bind-value = "@cuentacobrar.Abono" /> 
+</div>
+
+<div class ="forum-group">
+    <label for = "saldo">Saldo</label>
+<input class = "form-control" id="Saldo" @bind-value = "@cuentacobrar.Saldo" /> 
+</div>
+
+</MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; cuentacobrar = new CuentasporCobrar(); })">Cancelar</MatButton>
+        <MatButton OnClick="@GuardarCuentaCobrar">OK</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+
+
+@*<button id="btnGuardar" @onclick="GuardarCuentaCobrar">
+    Guardar
+</button>
+*@
+
+
+<br/>
+<br/>
+<br/>
+
+
+
+
+
+@code {
+    protected bool dialogIsOpen { get; set; }
+
+    [Inject]
+    public ConstructoraDbcontex constructoraDbcontex { get; set; }
+
+    CuentasporCobrar cuentacobrar = new CuentasporCobrar();
+
+  protected void GuardarCuentaCobrar()
+    {
+       if(cuentacobrar.CuentasporCobrarId > 0)
+            constructoraDbcontex.cuentasporCobrar.Update(cuentacobrar);
+        else
+            constructoraDbcontex.cuentasporCobrar.Add(cuentacobrar);
+        
+        constructoraDbcontex.SaveChanges();
+        dialogIsOpen = false;
+       cuentacobrar= new CuentasporCobrar();
+
+
+    }
+
+    protected void EliminarCuenta(CuentasporCobrar  cuentacobrar) 
+    {
+        constructoraDbcontex.cuentasporCobrar.Remove(cuentacobrar);
+        constructoraDbcontex.SaveChanges();
+        
+    }
+
+    protected void ActualizarCuentasCobrar(CuentasporCobrar tipoCuenta)
+    {
+        dialogIsOpen = true;
+        cuentacobrar = tipoCuenta;
+        //tipoCuenta  es el objeto parametro; ActualizarCuentasCobrar(CuentasporCobrar tipoCuenta)
+    }
+
+
+}
+
+
+ 
+
+   
+
+    

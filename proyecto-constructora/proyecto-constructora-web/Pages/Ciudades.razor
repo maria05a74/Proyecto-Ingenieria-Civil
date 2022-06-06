@@ -1,0 +1,136 @@
+﻿@page "/Ciudades"
+@using Microsoft.EntityFrameworkCore
+@using proyecto_constructora_web.Model
+@inject IMatToaster Toaster
+
+
+<h3>Ciudades</h3>
+<MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>
+                CiudadiD
+            </td>
+
+            <td>
+                Nombre
+            </td>
+
+
+            <td>Editar</td>
+            <td>Eliminar</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ciudad in constructoraDbcontex.ciudades.Include(ciudad => ciudad.Departamento))
+        {
+            <tr>
+                <td>
+                    @ciudad.CiudadId
+                </td>
+
+                <td>
+                    @ciudad.Nombre
+                </td>
+
+
+                <td>
+                    @if (ciudad.Departamento != null)
+                    {
+                        @ciudad.Departamento.Nombre
+                        ;
+                    }
+                </td>
+
+
+
+                <td>
+                    <button @onclick="()=>ActualizarCiudad(ciudad)">Actualizar</button>
+                </td>
+
+                <td>
+                    <button @onclick="()=>EliminarCiudad(ciudad)">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<MatDialog @bind-IsOpen="@dialogIsOpen">
+    <MatDialogTitle>Crear Ciudad</MatDialogTitle>
+    <MatDialogContent>
+
+
+
+
+
+        <div class="forum-group">
+            <label for="Nombre">Nombre</label>
+            <input class="form-control" id="Nombre" @bind-value="@ciudad.Nombre" />
+        </div>
+
+
+
+
+        <div class="forum-group">
+            <label for="Valor">Departamemento</label>
+            <MatAutocompleteList Items="@constructoraDbcontex.departamentos" CustomStringSelector="@(i => i.Nombre)" @bind-Value="@ciudad.Departamento" TItem="Departamento" Label="Seleccione el departamento">
+                <ItemTemplate>
+                    <div style="display: flex; flex-direction: row; width: 100%;">
+                        <div style="flex: 1;">@context.Nombre</div>
+                    </div>
+                </ItemTemplate>
+            </MatAutocompleteList>
+
+            <br />
+            <br />
+            <br />
+        </div>
+
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; ciudad = new Ciudad(); })">Cancelar</MatButton>
+        <MatButton OnClick="@GuardarCiudad">OK</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+@code {
+
+    protected bool dialogIsOpen { get; set; }
+
+    [Inject]
+    public ConstructoraDbcontex constructoraDbcontex { get; set; }
+    Ciudad ciudad = new Ciudad();
+
+    protected void GuardarCiudad()
+    {
+        if (ciudad.Departamento == null && ciudad.DepartamentoId < 1)
+        {
+            Toaster.Add("El Departamento  es obligatorio", MatToastType.Danger, "No es posible grabar el departamento", "danger");
+            return;
+        }
+
+        if (ciudad.CiudadId > 0)
+            constructoraDbcontex.ciudades.Update(ciudad);
+        else
+            constructoraDbcontex.ciudades.Add(ciudad);
+
+        constructoraDbcontex.SaveChanges();
+        dialogIsOpen = false;
+        ciudad = new Ciudad();
+    }
+
+    protected void EliminarCiudad(Ciudad ciudad)
+    {
+        constructoraDbcontex.ciudades.Remove(ciudad);
+        constructoraDbcontex.SaveChanges();
+    }
+
+    protected void ActualizarCiudad(Ciudad CIUDAD)
+    {
+        dialogIsOpen = true;
+        ciudad = CIUDAD;
+        //CIUDAD es el objeto parámetro  protected void ActualizarProyectos(Ciudad CIUDAD))
+    }
+}

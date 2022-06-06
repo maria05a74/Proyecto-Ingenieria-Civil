@@ -1,0 +1,166 @@
+﻿@page "/clientes"
+@using proyecto_constructora_web.Model
+
+<h3>Clientes</h3>
+<MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
+<table class="table">
+    <thead>
+        <tr>
+            <td>
+                Id
+            </td>
+            <td>
+                Nombres
+            </td>
+            <td>
+                Apellidos
+            </td>
+            <td>
+                Cédula_Nit
+            </td>
+            <td>
+                Celular
+            </td>
+            <td>
+                Matricula profesional
+            </td>
+            <td>
+                Correo electronico
+            </td>
+            <td>
+                Tipo clientes
+            </td>
+            <td>Editar</td>
+            <td>Eliminar</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cliente in constructoraDbcontex.clientes)
+        {
+            <tr>
+                <td>
+                    @cliente.ClienteId
+                </td>
+                <td>
+                    @cliente.Nombres
+                </td>
+                <td>
+                    @cliente.Apellidos
+                </td>
+                <td>
+                    @cliente.Cedula_Nit
+                </td>
+                <td>
+                    @cliente.NumeroCelular
+                </td>
+                <td>
+                    @cliente.MatriculaProfesional
+                </td>
+                <td>
+                    @cliente.CorreoElectronico
+                </td>
+                <td>
+                    @cliente.TipoCliente
+                </td>
+                <td>
+                 <button @onclick="()=>ActualizarCliente(cliente)">Actualizar</button>
+                </td>
+
+                <td>
+                    <button @onclick="()=>EliminarCliente(cliente)">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<MatDialog @bind-IsOpen="@dialogIsOpen">
+    <MatDialogTitle>Crear Persona</MatDialogTitle>
+    <MatDialogContent>
+        <div class="forum-group">
+            <label for="Nombres">Nombres</label>
+            <input class="form-control" id="Nombres" @bind-value="@cliente.Nombres" />
+        </div>
+
+        <div class="forum-group">
+            <label for="Apellidos">Apellidos</label>
+            <input class="form-control" id="Apellidos" @bind-value="@cliente.Apellidos" />
+        </div>
+
+        <div class="forum-group">
+            <label for="Cedula">Cedula</label>
+            <input class="form-control" id="Cedula" @bind-value="@cliente.Cedula_Nit" />
+        </div>
+
+        <div class="forum-group">
+            <label for="Profesion">Profesion</label>
+            <input class="form-control" id="nombre" @bind-value="@cliente.Profesion" />
+        </div>
+
+        <div class="forum-group">
+            <label for="CorreoElectronico">CorreoElectronico</label>
+            <input class="form-control" id="CorreoElectronico" @bind-value="@cliente.CorreoElectronico" />
+        </div>
+
+        <div class="forum-group">
+            <label for="NumeroCelular">Matricula profesional</label>
+            <input class="form-control" id="NumeroCelular" @bind-value="@cliente.MatriculaProfesional" />
+        </div>
+
+        <div class="forum-group">
+            <label for="NumeroCelular">NumeroCelular</label>
+            <input class="form-control" id="NumeroCelular" @bind-value="@cliente.NumeroCelular" />
+        </div>
+
+        <div class="forum-group">
+            <label for="TipoCliente">TipoCliente</label>
+            <input class="form-control" id="TipoCliente" @bind-value="@cliente.TipoCliente" />
+        </div>
+    </MatDialogContent>
+    <MatDialogActions>
+       
+        <MatButton OnClick="@(e => { dialogIsOpen = false; cliente = new Cliente(); })">Cancelar</MatButton>
+        <MatButton OnClick="@GuardarCliente">OK</MatButton>
+         
+    </MatDialogActions>
+</MatDialog>
+<br/>
+<br/>
+<br/>
+
+
+@code {
+    protected bool dialogIsOpen { get; set; }
+
+    [Inject]
+    public ConstructoraDbcontex constructoraDbcontex { get; set; }
+
+    Cliente cliente = new Cliente();
+
+    protected void GuardarCliente()
+    {
+        if(cliente.ClienteId > 0)
+            constructoraDbcontex.clientes.Update(cliente);
+        else
+            constructoraDbcontex.clientes.Add(cliente);
+        
+        constructoraDbcontex.SaveChanges();
+        dialogIsOpen = false;
+        cliente = new Cliente();
+    }
+ 
+    
+protected void ActualizarCliente(Cliente customer)
+    {
+        dialogIsOpen = true;
+        cliente = customer;
+    }
+
+
+
+    protected void EliminarCliente(Cliente cliente) 
+    {
+        constructoraDbcontex.clientes.Remove(cliente);
+        constructoraDbcontex.SaveChanges();
+    }
+}
