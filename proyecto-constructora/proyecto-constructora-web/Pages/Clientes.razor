@@ -1,5 +1,5 @@
 ﻿@page "/clientes"
-@using proyecto_constructora_web.Model
+@using Constructora.Application.Dto
 
 <h3>Clientes</h3>
 <MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
@@ -35,7 +35,9 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var cliente in constructoraDbcontex.clientes)
+
+        @*@foreach (var cliente in constructoraDbcontex.clientes.Include(cliente => cliente.TipoCliente))
+      
         {
             <tr>
                 <td>
@@ -60,7 +62,7 @@
                     @cliente.CorreoElectronico
                 </td>
                 <td>
-                    @cliente.TipoCliente
+                    @cliente.TipoCliente.Nombre
                 </td>
                 <td>
                  <button @onclick="()=>ActualizarCliente(cliente)">Actualizar</button>
@@ -70,7 +72,7 @@
                     <button @onclick="()=>EliminarCliente(cliente)">Eliminar</button>
                 </td>
             </tr>
-        }
+        }*@
     </tbody>
 </table>
 
@@ -112,14 +114,28 @@
             <input class="form-control" id="NumeroCelular" @bind-value="@cliente.NumeroCelular" />
         </div>
 
-        <div class="forum-group">
-            <label for="TipoCliente">TipoCliente</label>
-            <input class="form-control" id="TipoCliente" @bind-value="@cliente.TipoCliente" />
+      
+                    <div class="forum-group">
+            <label for="Valor">Tipo Cliente</label>
+            @*<MatAutocompleteList Items="@constructoraDbcontex.tipoClientes" CustomStringSelector="@(i => i.Nombre)" @bind-Value="@cliente.TipoCliente" TItem="TipoDeCliente" Label="Seleccione el tipo de obra">
+                <ItemTemplate>
+                    <div style="display: flex; flex-direction: row; width: 100%;">
+                        <div style="flex: 1;">@context.Nombre</div>
+                    </div>
+                </ItemTemplate>
+            </MatAutocompleteList>*@
+
+            
+            
+<br />
+<br />
+<br />
         </div>
+
     </MatDialogContent>
     <MatDialogActions>
        
-        <MatButton OnClick="@(e => { dialogIsOpen = false; cliente = new Cliente(); })">Cancelar</MatButton>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; cliente = new ClienteDto(); })">Cancelar</MatButton>
         <MatButton OnClick="@GuardarCliente">OK</MatButton>
          
     </MatDialogActions>
@@ -132,25 +148,22 @@
 @code {
     protected bool dialogIsOpen { get; set; }
 
-    [Inject]
-    public ConstructoraDbcontex constructoraDbcontex { get; set; }
-
-    Cliente cliente = new Cliente();
+    ClienteDto cliente = new ClienteDto();
 
     protected void GuardarCliente()
     {
-        if(cliente.ClienteId > 0)
-            constructoraDbcontex.clientes.Update(cliente);
-        else
-            constructoraDbcontex.clientes.Add(cliente);
+        //if(cliente.ClienteId > 0)
+        //    constructoraDbcontex.clientes.Update(cliente);
+        //else
+        //    constructoraDbcontex.clientes.Add(cliente);
         
-        constructoraDbcontex.SaveChanges();
+        //constructoraDbcontex.SaveChanges();
         dialogIsOpen = false;
-        cliente = new Cliente();
+        cliente = new ClienteDto();
     }
  
     
-protected void ActualizarCliente(Cliente customer)
+protected void ActualizarCliente(ClienteDto customer)
     {
         dialogIsOpen = true;
         cliente = customer;
@@ -158,9 +171,9 @@ protected void ActualizarCliente(Cliente customer)
 
 
 
-    protected void EliminarCliente(Cliente cliente) 
+    protected void EliminarCliente(ClienteDto cliente) 
     {
-        constructoraDbcontex.clientes.Remove(cliente);
-        constructoraDbcontex.SaveChanges();
+        //constructoraDbcontex.clientes.Remove(cliente);
+        //constructoraDbcontex.SaveChanges();
     }
 }

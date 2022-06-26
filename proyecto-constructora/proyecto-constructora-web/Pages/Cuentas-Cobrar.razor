@@ -1,5 +1,5 @@
 ﻿@page "/CuentasxCobrar"
-@using proyecto_constructora_web.Model
+@using Constructora.Application.Dto
 
 <h3>Cuentas_Cobrar</h3>
 <MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
@@ -13,12 +13,20 @@
             <td>
                 Contrato
             </td>
+
             <td>
-                Nombre
+                Obra
             </td>
             <td>
                 Valor
             </td>
+            <td>
+                Nombre
+            </td>
+            <td>
+                Apellidos
+            </td>
+                        
             <td>
                Abono
             </td>
@@ -32,7 +40,7 @@
     </thead
 
     <tbody>
-        @foreach (var cuentacobrar  in constructoraDbcontex.cuentasporCobrar)
+        @*@foreach (var cuentacobrar  in constructoraDbcontex.cuentasporCobrar)
         {
             <tr>
                 <td>
@@ -42,10 +50,17 @@
                     @cuentacobrar.Contrato
                 </td>
                 <td>
-                    @cuentacobrar.Nombre
+                    @cuentacobrar.Obra
                 </td>
                 <td>
                     @cuentacobrar.Valor
+                </td>
+                <td>
+                    @cuentacobrar.Nombre
+                </td>
+                <td>
+                    @cuentacobrar.Apellidos
+
                 </td>
                 <td>
                     @cuentacobrar.Abono
@@ -63,7 +78,7 @@
 
 
             </tr>
-        }
+        }*@
     </tbody>
 </table>
 <MatDialog @bind-IsOpen="@dialogIsOpen">
@@ -77,13 +92,23 @@
 </div>
 
 <div class ="forum-group">
-    <label for = "nombre"> Nombre </label>
-<input class = "form-control" id="Nombre" @bind-value = "@cuentacobrar.Nombre" /> 
+    <label for = "Obra"> Obra </label>
+<input class = "form-control" id="Obra" @bind-value = "@cuentacobrar.Obra" /> 
 </div>
 
 <div class ="forum-group">
     <label for = "Valor"> Valor </label>
 <input class = "form-control" id="Valor" @bind-value = "@cuentacobrar.Valor" /> 
+</div>
+
+<div class ="forum-group">
+    <label for = "nombre"> Nombre </label>
+<input class = "form-control" id="Nombre" @bind-value = "@cuentacobrar.Nombre" /> 
+</div>
+
+<div class ="forum-group">
+    <label for = "Apellidos"> Apellidos </label>
+<input class = "form-control" id="Apellidos" @bind-value = "@cuentacobrar.Apellidos" /> 
 </div>
 
 <div class ="forum-group">
@@ -98,7 +123,7 @@
 
 </MatDialogContent>
     <MatDialogActions>
-        <MatButton OnClick="@(e => { dialogIsOpen = false; cuentacobrar = new CuentasporCobrar(); })">Cancelar</MatButton>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; cuentacobrar = new CuentasporCobrarDto(); })">Cancelar</MatButton>
         <MatButton OnClick="@GuardarCuentaCobrar">OK</MatButton>
     </MatDialogActions>
 </MatDialog>
@@ -122,33 +147,33 @@
 @code {
     protected bool dialogIsOpen { get; set; }
 
-    [Inject]
-    public ConstructoraDbcontex constructoraDbcontex { get; set; }
+    //[Inject]
+    //public ConstructoraDbcontex constructoraDbcontex { get; set; }
 
-    CuentasporCobrar cuentacobrar = new CuentasporCobrar();
+    CuentasporCobrarDto cuentacobrar = new CuentasporCobrarDto();
 
   protected void GuardarCuentaCobrar()
     {
-       if(cuentacobrar.CuentasporCobrarId > 0)
-            constructoraDbcontex.cuentasporCobrar.Update(cuentacobrar);
-        else
-            constructoraDbcontex.cuentasporCobrar.Add(cuentacobrar);
+       //if(cuentacobrar.CuentasporCobrarId > 0)
+       //     constructoraDbcontex.cuentasporCobrar.Update(cuentacobrar);
+       // else
+       //     constructoraDbcontex.cuentasporCobrar.Add(cuentacobrar);
         
-        constructoraDbcontex.SaveChanges();
+       // constructoraDbcontex.SaveChanges();
         dialogIsOpen = false;
-       cuentacobrar= new CuentasporCobrar();
+       cuentacobrar= new CuentasporCobrarDto();
 
 
     }
 
-    protected void EliminarCuenta(CuentasporCobrar  cuentacobrar) 
+    protected void EliminarCuenta(CuentasporCobrarDto  cuentacobrar) 
     {
-        constructoraDbcontex.cuentasporCobrar.Remove(cuentacobrar);
-        constructoraDbcontex.SaveChanges();
+        //constructoraDbcontex.cuentasporCobrar.Remove(cuentacobrar);
+        //constructoraDbcontex.SaveChanges();
         
     }
 
-    protected void ActualizarCuentasCobrar(CuentasporCobrar tipoCuenta)
+    protected void ActualizarCuentasCobrar(CuentasporCobrarDto tipoCuenta)
     {
         dialogIsOpen = true;
         cuentacobrar = tipoCuenta;

@@ -1,6 +1,6 @@
 ﻿
 @page "/TipodeCliente"
-@using proyecto_constructora_web.Model
+@using Constructora.Application.Dto
 
 <h3>Tipos de Cliente</h3>
 <MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
@@ -22,7 +22,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var tipoCliente in constructoraDbcontex.tipoClientes)
+        @*@foreach (var tipoCliente in constructoraDbcontex.tipoClientes)
         {
             <tr>
                 <td>
@@ -42,7 +42,7 @@
                 
                 
             </tr>
-        }
+        }*@
     </tbody>
 </table>
 <MatDialog @bind-IsOpen="@dialogIsOpen">
@@ -56,7 +56,7 @@
 
 </MatDialogContent>
     <MatDialogActions>
-        <MatButton OnClick="@(e => { dialogIsOpen = false; tipoCliente = new TipoDeCliente(); })">Cancelar</MatButton>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; tipoCliente = new TipoDeClienteDto(); })">Cancelar</MatButton>
         <MatButton OnClick="@GuardarTipo">OK</MatButton>
     </MatDialogActions>
 </MatDialog>
@@ -77,31 +77,31 @@
 
 protected bool dialogIsOpen { get; set; }
 
-    [Inject]
-    public ConstructoraDbcontex constructoraDbcontex { get; set; }
+    //[Inject]
+    //public ConstructoraDbcontex constructoraDbcontex { get; set; }
 
-    TipoDeCliente  tipoCliente = new TipoDeCliente();
+    TipoDeClienteDto  tipoCliente = new TipoDeClienteDto();
 
     protected void  GuardarTipo()
     {
-        if(tipoCliente.TipoClienteId > 0)
-            constructoraDbcontex.tipoClientes.Update(tipoCliente);
-        else
-            constructoraDbcontex.tipoClientes.Add(tipoCliente);
+        //if(tipoCliente.TipoClienteId > 0)
+        //    constructoraDbcontex.tipoClientes.Update(tipoCliente);
+        //else
+        //    constructoraDbcontex.tipoClientes.Add(tipoCliente);
         
-        constructoraDbcontex.SaveChanges();
+        //constructoraDbcontex.SaveChanges();
         dialogIsOpen = false;
-       tipoCliente= new TipoDeCliente();
+       tipoCliente= new TipoDeClienteDto();
 
       }
 
-    protected void EliminarTipoCliente(TipoDeCliente  tipoCliente) 
+    protected void EliminarTipoCliente(TipoDeClienteDto  tipoCliente) 
     {
-        constructoraDbcontex.tipoClientes.Remove(tipoCliente);
-        constructoraDbcontex.SaveChanges();
+        //constructoraDbcontex.tipoClientes.Remove(tipoCliente);
+        //constructoraDbcontex.SaveChanges();
  }
 
- protected void ActualizarTipodeCliente(TipoDeCliente TIPODECLIENTE)
+ protected void ActualizarTipodeCliente(TipoDeClienteDto TIPODECLIENTE)
     {
         dialogIsOpen = true;
         tipoCliente = TIPODECLIENTE;

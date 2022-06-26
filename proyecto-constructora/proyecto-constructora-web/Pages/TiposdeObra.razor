@@ -1,6 +1,5 @@
 ﻿@page "/TipoDeObra"
-@using Microsoft.EntityFrameworkCore
-@using proyecto_constructora_web.Model
+@using Constructora.Application.Dto
 
 <h3>TipodeObra</h3>
 <MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
@@ -21,7 +20,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var tipoObra in constructoraDbcontex.tipoObra)
+        @*@foreach (var tipoObra in constructoraDbcontex.tipoObra)
         {
             <tr>
                 <td>
@@ -39,7 +38,7 @@
 
                 
             </tr>
-        }
+        }*@
     </tbody>
 </table>
 
@@ -53,7 +52,7 @@
 </div>
 </MatDialogContent>
     <MatDialogActions>
-        <MatButton OnClick="@(e => { dialogIsOpen = false; tipoobra = new TipodeObra(); })">Cancelar</MatButton>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; tipoobra = new TipodeObraDto(); })">Cancelar</MatButton>
         <MatButton OnClick="@GuardarTipoObra">OK</MatButton>
     </MatDialogActions>
 </MatDialog>
@@ -69,37 +68,32 @@
 <br/>
 
 
-
-
-
-
-
 @code {
     protected bool dialogIsOpen { get; set; }
 
-    [Inject]
-    public ConstructoraDbcontex constructoraDbcontex { get; set; }
-    TipodeObra tipoobra = new TipodeObra();
+    //[Inject]
+    //public ConstructoraDbcontex constructoraDbcontex { get; set; }
+    TipodeObraDto tipoobra = new TipodeObraDto();
 
     protected void GuardarTipoObra()
     {
-        if(tipoobra.TipodeObraId > 0)
-            constructoraDbcontex.tipoObra.Update(tipoobra);
-        else
-            constructoraDbcontex.tipoObra.Add(tipoobra);
+        //if(tipoobra.TipodeObraId > 0)
+        //    constructoraDbcontex.tipoObra.Update(tipoobra);
+        //else
+        //    constructoraDbcontex.tipoObra.Add(tipoobra);
         
-        constructoraDbcontex.SaveChanges();
+        //constructoraDbcontex.SaveChanges();
         dialogIsOpen = false;
-        tipoobra = new TipodeObra();
+        tipoobra = new TipodeObraDto();
     }
 
-    protected void EliminarTipodeObra(TipodeObra tipoobra)
+    protected void EliminarTipodeObra(TipodeObraDto tipoobra)
     {
-        constructoraDbcontex.tipoObra.Remove(tipoobra);
-        constructoraDbcontex.SaveChanges();
+        //constructoraDbcontex.tipoObra.Remove(tipoobra);
+        //constructoraDbcontex.SaveChanges();
     }
 
-    protected void ActualizarTipodeObra(TipodeObra tipoObra)
+    protected void ActualizarTipodeObra(TipodeObraDto tipoObra)
     {
         dialogIsOpen = true;
         tipoobra = tipoObra;

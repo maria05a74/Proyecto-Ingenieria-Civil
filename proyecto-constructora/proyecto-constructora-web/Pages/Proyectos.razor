@@ -1,6 +1,6 @@
 ﻿@page "/proyectos"
-@using Microsoft.EntityFrameworkCore
-@using proyecto_constructora_web.Model
+
+@using Constructora.Application.Dto
 @inject IMatToaster Toaster
 
 <h3>Proyectos</h3>
@@ -20,6 +20,10 @@
             </td>
             
             <td>
+                Apellidos
+            </td>
+
+            <td>
                 Ciudad
             </td>
             <td>
@@ -33,7 +37,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var proyecto in constructoraDbcontex.proyectos.Include(proyecto => proyecto.TipoObra))
+        @*@foreach (var proyecto in constructoraDbcontex.proyectos.Include(proyecto => proyecto.TipoObra))
          
         {
             <tr>
@@ -46,8 +50,13 @@
                 <td>
                     @proyecto.Nombre
                 </td>
+
+                 <td>
+                    @proyecto.Apellidos
+
+                </td>
                 <td>
-                    @proyecto.Ciudad.Nombre
+                    @proyecto.Ciudad?.Nombre
                 </td>
                 <td>
                     @proyecto.TipoObra?.Nombre
@@ -66,7 +75,7 @@
             </tr>
 
 
-        }
+        }*@
 
     
 
@@ -88,19 +97,22 @@
             <label for="Nombre">Nombre</label>
             <input class="form-control" id="Nombre" @bind-value="@proyecto.Nombre" />
         </div>
-
+        <div class="forum-group">
+            <label for="Apellidos">Apellidos</label>
+            <input class="form-control" id="Apellidos" @bind-value="@proyecto.Apellidos" />
+        </div>
         
 
          <div class="forum-group">
             <label for="Valor">Ciudad</label>
-            <MatAutocompleteList Items="@constructoraDbcontex.ciudades" CustomStringSelector="@(i => i.Nombre)" @bind-Value="@proyecto.Ciudad" TItem="Ciudad" Label="Seleccione la ciudad">
+           @* <MatAutocompleteList Items="@constructoraDbcontex.ciudades" CustomStringSelector="@(i => i?.Nombre)" @bind-Value="@proyecto.Ciudad" TItem="Ciudad" Label="Seleccione la ciudad">
                 <ItemTemplate>
                     <div style="display: flex; flex-direction: row; width: 100%;">
                         <div style="flex: 1;">@context.Nombre</div>
                     </div>
                 </ItemTemplate>
             </MatAutocompleteList>
-
+*@
             
             
 <br />
@@ -116,13 +128,13 @@
 
         <div class="forum-group">
             <label for="Valor">Tipo Obra</label>
-            <MatAutocompleteList Items="@constructoraDbcontex.tipoObra" CustomStringSelector="@(i => i.Nombre)" @bind-Value="@proyecto.TipoObra" TItem="TipodeObra" Label="Seleccione el tipo de obra">
+            @*<MatAutocompleteList Items="@constructoraDbcontex.tipoObra" CustomStringSelector="@(i => i?.Nombre)" @bind-Value="@proyecto.TipoObra" TItem="TipodeObraDto" Label="Seleccione el tipo de obra">
                 <ItemTemplate>
                     <div style="display: flex; flex-direction: row; width: 100%;">
                         <div style="flex: 1;">@context.Nombre</div>
                     </div>
                 </ItemTemplate>
-            </MatAutocompleteList>
+            </MatAutocompleteList>*@
 
             
             
@@ -133,7 +145,11 @@
 
     </MatDialogContent>
     <MatDialogActions>
-        <MatButton OnClick="@(e => { dialogIsOpen = false; proyecto = new Proyecto(); })">Cancelar</MatButton>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; proyecto = new ProyectoDto
+            {
+                TipoObraId = -1,
+                CiudadId = -1,
+            }; })">Cancelar</MatButton>
         <MatButton OnClick="@GuardarProyecto">OK</MatButton>
     </MatDialogActions>
 </MatDialog>
@@ -141,38 +157,40 @@
 @code {
     protected bool dialogIsOpen { get; set; }
 
-    [Inject]
-    public ConstructoraDbcontex constructoraDbcontex { get; set; }
-    Proyecto proyecto = new Proyecto();
-    
+    //[Inject]
+    //public ConstructoraDbcontex constructoraDbcontex { get; set; }
+    ProyectoDto proyecto = new ProyectoDto();
+
 
     protected void GuardarProyecto()
     {
-        if (proyecto.TipoObra.TipodeObraId < 1)
-        {
-            Toaster.Add("El tipo de obra es obligatorio", MatToastType.Danger, "No es posible guardar el proyecto", "danger");
-            return;
-        }
+        //if (proyecto.TipoObra.TipodeObraId < 1)
+        //{
+        //    Toaster.Add("El tipo de obra es obligatorio", MatToastType.Danger, "No es posible guardar el proyecto", "danger");
+        //    return;
+        //}
 
-        if (proyecto.ProyectoId > 0)
-            constructoraDbcontex.proyectos.Update(proyecto);
-        else
-            constructoraDbcontex.proyectos.Add(proyecto);
+        //if (proyecto.ProyectoId > 0)
+        //    constructoraDbcontex.proyectos.Update(proyecto);
+        //else
+        //    constructoraDbcontex.proyectos.Add(proyecto);
 
-
-
-        constructoraDbcontex.SaveChanges();
-        dialogIsOpen = false;
-        proyecto = new Proyecto();
+        //constructoraDbcontex.SaveChanges();
+        //dialogIsOpen = false;
+        proyecto = new ProyectoDto
+            {
+                TipoObraId = -1,
+                CiudadId = -1,
+            };
     }
 
-    protected void EliminarProyecto(Proyecto proyecto)
+    protected void EliminarProyecto(ProyectoDto proyecto)
     {
-        constructoraDbcontex.proyectos.Remove(proyecto);
-        constructoraDbcontex.SaveChanges();
+        //constructoraDbcontex.proyectos.Remove(proyecto);
+        //constructoraDbcontex.SaveChanges();
     }
 
-    protected void ActualizarProyectos(Proyecto PROYECTO)
+    protected void ActualizarProyectos(ProyectoDto PROYECTO)
     {
         dialogIsOpen = true;
         proyecto = PROYECTO;

@@ -1,8 +1,6 @@
 ﻿@page "/Ciudades"
-@using Microsoft.EntityFrameworkCore
-@using proyecto_constructora_web.Model
+@using Constructora.Application.Dto
 @inject IMatToaster Toaster
-
 
 <h3>Ciudades</h3>
 <MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
@@ -24,7 +22,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var ciudad in constructoraDbcontex.ciudades.Include(ciudad => ciudad.Departamento))
+        @*@foreach (var ciudad in constructoraDbcontex.ciudades.Include(ciudad => ciudad.Departamento))
         {
             <tr>
                 <td>
@@ -54,17 +52,12 @@
                     <button @onclick="()=>EliminarCiudad(ciudad)">Eliminar</button>
                 </td>
             </tr>
-        }
+        }*@
     </tbody>
 </table>
 <MatDialog @bind-IsOpen="@dialogIsOpen">
     <MatDialogTitle>Crear Ciudad</MatDialogTitle>
     <MatDialogContent>
-
-
-
-
-
         <div class="forum-group">
             <label for="Nombre">Nombre</label>
             <input class="form-control" id="Nombre" @bind-value="@ciudad.Nombre" />
@@ -75,13 +68,13 @@
 
         <div class="forum-group">
             <label for="Valor">Departamemento</label>
-            <MatAutocompleteList Items="@constructoraDbcontex.departamentos" CustomStringSelector="@(i => i.Nombre)" @bind-Value="@ciudad.Departamento" TItem="Departamento" Label="Seleccione el departamento">
+           @* <MatAutocompleteList Items="@constructoraDbcontex.departamentos" CustomStringSelector="@(i => i.Nombre)" @bind-Value="@ciudad.Departamento" TItem="Departamento" Label="Seleccione el departamento">
                 <ItemTemplate>
                     <div style="display: flex; flex-direction: row; width: 100%;">
                         <div style="flex: 1;">@context.Nombre</div>
                     </div>
                 </ItemTemplate>
-            </MatAutocompleteList>
+            </MatAutocompleteList>*@
 
             <br />
             <br />
@@ -90,7 +83,7 @@
 
     </MatDialogContent>
     <MatDialogActions>
-        <MatButton OnClick="@(e => { dialogIsOpen = false; ciudad = new Ciudad(); })">Cancelar</MatButton>
+        <MatButton OnClick="@(e => { dialogIsOpen = false; ciudad = new CiudadDto(); })">Cancelar</MatButton>
         <MatButton OnClick="@GuardarCiudad">OK</MatButton>
     </MatDialogActions>
 </MatDialog>
@@ -99,9 +92,7 @@
 
     protected bool dialogIsOpen { get; set; }
 
-    [Inject]
-    public ConstructoraDbcontex constructoraDbcontex { get; set; }
-    Ciudad ciudad = new Ciudad();
+    CiudadDto ciudad = new CiudadDto();
 
     protected void GuardarCiudad()
     {
@@ -111,23 +102,23 @@
             return;
         }
 
-        if (ciudad.CiudadId > 0)
-            constructoraDbcontex.ciudades.Update(ciudad);
-        else
-            constructoraDbcontex.ciudades.Add(ciudad);
+        //if (ciudad.CiudadId > 0)
+        //    constructoraDbcontex.ciudades.Update(ciudad);
+        //else
+        //    constructoraDbcontex.ciudades.Add(ciudad);
 
-        constructoraDbcontex.SaveChanges();
+        //constructoraDbcontex.SaveChanges();
         dialogIsOpen = false;
-        ciudad = new Ciudad();
+        ciudad = new CiudadDto();
     }
 
-    protected void EliminarCiudad(Ciudad ciudad)
+    protected void EliminarCiudad(CiudadDto ciudad)
     {
-        constructoraDbcontex.ciudades.Remove(ciudad);
-        constructoraDbcontex.SaveChanges();
+        //constructoraDbcontex.ciudades.Remove(ciudad);
+        //constructoraDbcontex.SaveChanges();
     }
 
-    protected void ActualizarCiudad(Ciudad CIUDAD)
+    protected void ActualizarCiudad(CiudadDto CIUDAD)
     {
         dialogIsOpen = true;
         ciudad = CIUDAD;

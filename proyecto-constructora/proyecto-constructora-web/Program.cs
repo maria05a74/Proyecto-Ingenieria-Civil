@@ -1,6 +1,5 @@
 using MatBlazor;
 using proyecto_constructora_web.Data;
-using proyecto_constructora_web.Model;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +9,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 
-builder.Services.AddDbContext<ConstructoraDbcontex>();
+//builder.Services.AddDbContext<ConstructoraDbcontex>();
 builder.Services.AddMatBlazor();
 
 builder.Services.AddMatToaster(config =>

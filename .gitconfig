@@ -1,0 +1,13 @@
+[http]
+[https]
+	version = HTTP/1.1
+	postBuffer = 1048576000
+[lfs]
+	activitytimeout = 60
+[core]
+    packedGitWindowSize = 640m
+    packedGitLimit = 640m
+    preloadIndex = false
+[pack]
+    windowMemory = 640m
+    threads = 1
