@@ -13,9 +13,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Constructora.Application.Core\Constructora.Application.Core.csproj" />
-    <ProjectReference Include="..\Constructora.Application.Dto\Constructora.Application.Dto.csproj" />
-  </ItemGroup>
-
 </Project>
