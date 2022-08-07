@@ -24,7 +24,8 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var ciudad in ciudades)
+        @*Operador de asignacion nulo*@
+        @foreach (var ciudad in ciudades ?? new List<CiudadDto>())
         {
             <tr>
                 <td>
@@ -62,12 +63,9 @@
             <input class="form-control" id="Nombre" @bind-value="@ciudad.Nombre" />
         </div>
 
-
-
-
         <div class="forum-group">
             <label for="Valor">Departamemento</label>
-           <MatAutocompleteList Items="@departamentos" CustomStringSelector="@(i => i.Nombre)" @bind-Value="@ciudad.Departamento" TItem="DepartamentoDto" Label="Seleccione el departamento">
+           <MatAutocompleteList Items="@departamentos" CustomStringSelector="@(i => i?.Nombre)" @bind-Value="@ciudad.Departamento" TItem="DepartamentoDto" Label="Seleccione el departamento">
                 <ItemTemplate>
                     <div style="display: flex; flex-direction: row; width: 100%;">
                         <div style="flex: 1;">@context.Nombre</div>
@@ -132,16 +130,20 @@
             Toaster.Add("El Departamento  es obligatorio", MatToastType.Danger, "No es posible grabar el departamento", "danger");
             return;
         }
+        // Sin refactorizar
+        //Method metodo;
 
-        Method metodo;
+        //if (ciudad.CiudadId > 0)
+        //    metodo = Method.Put;
+        //else
+        //    metodo = Method.Post;
 
-        if (ciudad.CiudadId > 0)
-            metodo = Method.Put;
-        else
-            metodo = Method.Post;
+        //Refactorizado
+        var url = "https://localhost:7112/api/Ciudad" + ((ciudad.CiudadId > 0) ? "/" + ciudad.CiudadId : string.Empty);
+        Method metodo = (ciudad.CiudadId > 0) ? Method.Put : Method.Post;
 
         var client = new RestClient();
-        var request = new RestRequest("https://localhost:7112/api/Ciudad", metodo);
+        var request = new RestRequest(url, metodo);//(ciudad.CiudadId > 0) ? Method.Put : Method.Post);
         request.AddHeader("Content-Type", "application/json");
 
         string ciudadJson = JsonConvert.SerializeObject(ciudad);
