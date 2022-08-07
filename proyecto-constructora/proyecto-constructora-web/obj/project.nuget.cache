@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "XRl9eOIPiahQdzpP/r/puhQi+fgIDfF4xYMfiHvIPrm47ibU0KdO9inSFNnfjCBb7K3vR6piob0oP3wYc3rJrw==",
+  "dgSpecHash": "JG3tCuaauA9tBz/rP/INRYQyobziLZoKua8UbIN5YuKR+Ly7YXlB2jybQMBFD8+nVmwy1EX1Kv5w6iMYdX/LaQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\PERSONAL\\source\\repos\\proyecto-constructora\\proyecto-constructora\\proyecto-constructora-web\\proyecto-constructora-web.csproj",
   "expectedPackageFiles": [
@@ -66,6 +66,7 @@
     "C:\\Users\\PERSONAL\\.nuget\\packages\\nuget.projectmodel\\5.11.0\\nuget.projectmodel.5.11.0.nupkg.sha512",
     "C:\\Users\\PERSONAL\\.nuget\\packages\\nuget.protocol\\5.11.0\\nuget.protocol.5.11.0.nupkg.sha512",
     "C:\\Users\\PERSONAL\\.nuget\\packages\\nuget.versioning\\5.11.0\\nuget.versioning.5.11.0.nupkg.sha512",
+    "C:\\Users\\PERSONAL\\.nuget\\packages\\restsharp\\108.0.1\\restsharp.108.0.1.nupkg.sha512",
     "C:\\Users\\PERSONAL\\.nuget\\packages\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\PERSONAL\\.nuget\\packages\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\PERSONAL\\.nuget\\packages\\runtime.fedora.24-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.fedora.24-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",

@@ -17,12 +17,20 @@ namespace Constructora.Services.Api.Controllers
             {
                   new DepartamentoDto
                   {
-
+                      DepartamentoId = 1,
+                      Nombre = "Cauca"
                   },
                   new DepartamentoDto
                   {
-
+                      DepartamentoId = 2,
+                      Nombre = "Valle"
+                  },
+                  new DepartamentoDto
+                  {
+                      DepartamentoId = 3,
+                      Nombre = "Cundinamarca"
                   }
+
             };
         }
 

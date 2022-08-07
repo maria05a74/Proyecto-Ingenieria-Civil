@@ -12,23 +12,29 @@ namespace Constructora.Services.Api.Controllers
     {
         // GET: api/<CiudadController>
         [HttpGet]
-        public IEnumerable<CiudadDto> Get()
-        {
-            return new CiudadDto[]
+        public IEnumerable<CiudadDto> Get() => new CiudadDto[]
             {
                 new CiudadDto
                 {
-                    
+                    CiudadId = 1,
+                    Nombre = "Popayán",
+                    Departamento = new DepartamentoDto
+                    {
+                        Nombre = "Cauca",
+                        DepartamentoId = 1,
+                    }
                 },
                 new CiudadDto
                 {
-
-
+                    CiudadId = 2,
+                    Nombre = "Cali",
+                    Departamento = new DepartamentoDto
+                    {
+                        Nombre = "Valle",
+                        DepartamentoId = 2,
+                    }
                 }
-        };
-        }
-
-
+            };
 
         // GET api/<CiudadController>/5
         [HttpGet("{id}")]
@@ -39,8 +45,9 @@ namespace Constructora.Services.Api.Controllers
 
         // POST api/<CiudadController>
         [HttpPost]
-        public void Post([FromBody] CiudadDto value)
+        public void Post([FromBody] CiudadDto ciudad)
         {
+            string nombrePersona = ciudad.Nombre;
         }
 
         // PUT api/<CiudadController>/5

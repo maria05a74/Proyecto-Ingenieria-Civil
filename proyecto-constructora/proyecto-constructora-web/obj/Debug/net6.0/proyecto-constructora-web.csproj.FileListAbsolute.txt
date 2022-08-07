@@ -489,3 +489,4 @@ C:\Users\PERSONAL\source\repos\proyecto-constructora\proyecto-constructora\proye
 C:\Users\PERSONAL\source\repos\proyecto-constructora\proyecto-constructora\proyecto-constructora-web\obj\Debug\net6.0\ref\proyecto-constructora-web.dll
 C:\Users\PERSONAL\source\repos\proyecto-constructora\proyecto-constructora\proyecto-constructora-web\bin\Debug\net6.0\Constructora.Application.Dto.dll
 C:\Users\PERSONAL\source\repos\proyecto-constructora\proyecto-constructora\proyecto-constructora-web\bin\Debug\net6.0\Constructora.Application.Dto.pdb
+C:\Users\PERSONAL\source\repos\proyecto-constructora\proyecto-constructora\proyecto-constructora-web\bin\Debug\net6.0\RestSharp.dll

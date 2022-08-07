@@ -1,5 +1,7 @@
 ﻿@page "/Ciudades"
 @using Constructora.Application.Dto
+@using Newtonsoft.Json
+@using RestSharp
 @inject IMatToaster Toaster
 
 <h3>Ciudades</h3>
@@ -9,20 +11,20 @@
     <thead>
         <tr>
             <td>
-                CiudadiD
+                Ciudad Id
             </td>
-
             <td>
                 Nombre
             </td>
-
-
+            <td>
+                Departamento
+            </td>
             <td>Editar</td>
             <td>Eliminar</td>
         </tr>
     </thead>
     <tbody>
-        @*@foreach (var ciudad in constructoraDbcontex.ciudades.Include(ciudad => ciudad.Departamento))
+        @foreach (var ciudad in ciudades)
         {
             <tr>
                 <td>
@@ -41,9 +43,6 @@
                         ;
                     }
                 </td>
-
-
-
                 <td>
                     <button @onclick="()=>ActualizarCiudad(ciudad)">Actualizar</button>
                 </td>
@@ -52,7 +51,7 @@
                     <button @onclick="()=>EliminarCiudad(ciudad)">Eliminar</button>
                 </td>
             </tr>
-        }*@
+        }
     </tbody>
 </table>
 <MatDialog @bind-IsOpen="@dialogIsOpen">
@@ -68,13 +67,13 @@
 
         <div class="forum-group">
             <label for="Valor">Departamemento</label>
-           @* <MatAutocompleteList Items="@constructoraDbcontex.departamentos" CustomStringSelector="@(i => i.Nombre)" @bind-Value="@ciudad.Departamento" TItem="Departamento" Label="Seleccione el departamento">
+           <MatAutocompleteList Items="@departamentos" CustomStringSelector="@(i => i.Nombre)" @bind-Value="@ciudad.Departamento" TItem="DepartamentoDto" Label="Seleccione el departamento">
                 <ItemTemplate>
                     <div style="display: flex; flex-direction: row; width: 100%;">
                         <div style="flex: 1;">@context.Nombre</div>
                     </div>
                 </ItemTemplate>
-            </MatAutocompleteList>*@
+            </MatAutocompleteList>
 
             <br />
             <br />
@@ -91,8 +90,40 @@
 @code {
 
     protected bool dialogIsOpen { get; set; }
-
+    protected IEnumerable<CiudadDto> ciudades = new List<CiudadDto>();
+    protected IEnumerable<DepartamentoDto> departamentos = new List<DepartamentoDto>();
     CiudadDto ciudad = new CiudadDto();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var client = new RestClient();
+
+            // Peticion ciudades
+            var requestCiudad = new RestRequest("https://localhost:7112/api/Ciudad", Method.Get);
+            requestCiudad.AddHeader("Content-Type", "application/json");
+            var responseCiudad = client.Execute(requestCiudad);
+
+            if (responseCiudad.Content != null)
+            {
+                ciudades = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<CiudadDto>>(responseCiudad.Content);
+            }
+
+            //Peticion departmentos
+            var requestDepartamento = new RestRequest("https://localhost:7112/api/Departamento", Method.Get);
+            requestDepartamento.AddHeader("Content-Type", "application/json");
+            var responseDepartamento = client.Execute(requestDepartamento);
+
+            if (responseDepartamento.Content != null)
+            {
+                departamentos = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<DepartamentoDto>>(responseDepartamento.Content);   
+            }
+
+            StateHasChanged();
+        }
+        base.OnAfterRender(firstRender);
+    }
 
     protected void GuardarCiudad()
     {
@@ -101,6 +132,29 @@
             Toaster.Add("El Departamento  es obligatorio", MatToastType.Danger, "No es posible grabar el departamento", "danger");
             return;
         }
+
+        Method metodo;
+
+        if (ciudad.CiudadId > 0)
+            metodo = Method.Put;
+        else
+            metodo = Method.Post;
+
+        var client = new RestClient();
+        var request = new RestRequest("https://localhost:7112/api/Ciudad", metodo);
+        request.AddHeader("Content-Type", "application/json");
+
+        string ciudadJson = JsonConvert.SerializeObject(ciudad);
+        request.AddParameter("application/json", ciudadJson,  ParameterType.RequestBody);
+        
+        var response = client.Execute(request);
+
+        if (response.Content != null)
+        {
+            ciudades = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<CiudadDto>>(response.Content);
+            StateHasChanged();
+        }
+        
 
         //if (ciudad.CiudadId > 0)
         //    con
@@ -115,8 +169,16 @@
 
     protected void EliminarCiudad(CiudadDto ciudad)
     {
-        //constructoraDbcontex.ciudades.Remove(ciudad);
-        //constructoraDbcontex.SaveChanges();
+        var client = new RestClient();
+        var request = new RestRequest("https://localhost:7112/api/Ciudad/"+ciudad.CiudadId, Method.Delete);
+        request.AddHeader("Content-Type", "application/json");
+        var response = client.Execute(request);
+        //Se elimina la serialización porque no llega respuesta
+        //if (response.Content != null)
+        //{
+        //    ciudades = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<CiudadDto>>(response.Content);
+        //    StateHasChanged();
+        //}
     }
 
     protected void ActualizarCiudad(CiudadDto CIUDAD)
