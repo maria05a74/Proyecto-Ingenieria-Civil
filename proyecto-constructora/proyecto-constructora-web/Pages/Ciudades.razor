@@ -92,23 +92,31 @@
     protected IEnumerable<DepartamentoDto> departamentos = new List<DepartamentoDto>();
     CiudadDto ciudad = new CiudadDto();
 
+    protected void ObtenerCiudades()
+    {
+        var client = new RestClient();
+
+        // Peticion ciudades
+        var requestCiudad = new RestRequest("https://localhost:7112/api/Ciudad", Method.Get);
+        requestCiudad.AddHeader("Content-Type", "application/json");
+        var responseCiudad = client.Execute(requestCiudad);
+
+        if (responseCiudad.Content != null)
+        {
+            ciudades = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<CiudadDto>>(responseCiudad.Content);
+        }
+        else
+            ciudades = new List<CiudadDto>();
+    }
+
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
-            var client = new RestClient();
-
-            // Peticion ciudades
-            var requestCiudad = new RestRequest("https://localhost:7112/api/Ciudad", Method.Get);
-            requestCiudad.AddHeader("Content-Type", "application/json");
-            var responseCiudad = client.Execute(requestCiudad);
-
-            if (responseCiudad.Content != null)
-            {
-                ciudades = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<CiudadDto>>(responseCiudad.Content);
-            }
+            ObtenerCiudades();
 
             //Peticion departmentos
+            var client = new RestClient();
             var requestDepartamento = new RestRequest("https://localhost:7112/api/Departamento", Method.Get);
             requestDepartamento.AddHeader("Content-Type", "application/json");
             var responseDepartamento = client.Execute(requestDepartamento);
@@ -150,12 +158,6 @@
         request.AddParameter("application/json", ciudadJson,  ParameterType.RequestBody);
         
         var response = client.Execute(request);
-
-        if (response.Content != null)
-        {
-            ciudades = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<CiudadDto>>(response.Content);
-            StateHasChanged();
-        }
         
 
         //if (ciudad.CiudadId > 0)
@@ -167,6 +169,9 @@
         //constructoraDbcontex.SaveChanges();
         dialogIsOpen = false;
         ciudad = new CiudadDto();
+
+        ObtenerCiudades();
+        StateHasChanged();
     }
 
     protected void EliminarCiudad(CiudadDto ciudad)
