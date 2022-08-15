@@ -1,5 +1,8 @@
 ﻿@page "/clientes"
 @using Constructora.Application.Dto
+@using Newtonsoft.Json
+@using RestSharp
+
 
 <h3>Clientes</h3>
 <MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
@@ -36,8 +39,7 @@
     </thead>
     <tbody>
 
-        @*@foreach (var cliente in constructoraDbcontex.clientes.Include(cliente => cliente.TipoCliente))
-      
+        @foreach (var cliente in clientes ?? new  List<ClienteDto>())
         {
             <tr>
                 <td>
@@ -72,7 +74,7 @@
                     <button @onclick="()=>EliminarCliente(cliente)">Eliminar</button>
                 </td>
             </tr>
-        }*@
+        }
     </tbody>
 </table>
 
@@ -147,8 +149,28 @@
 
 @code {
     protected bool dialogIsOpen { get; set; }
-
+    protected IEnumerable<ClienteDto> clientes = new List<ClienteDto>();
     ClienteDto cliente = new ClienteDto();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var client = new RestClient();
+            var request = new RestRequest("https://localhost:7112/api/Cliente ", Method.Get);
+            request.AddHeader("Content-Type", "application/json");
+            var response = client.Execute(request);
+
+            if (response.Content != null)
+            {
+                clientes = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable< ClienteDto >>(response.Content);
+                StateHasChanged();
+            }
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+
 
     protected void GuardarCliente()
     {
@@ -170,10 +192,26 @@ protected void ActualizarCliente(ClienteDto customer)
     }
 
 
+  
 
-    protected void EliminarCliente(ClienteDto cliente) 
-    {
-        //constructoraDbcontex.clientes.Remove(cliente);
+protected void EliminarCliente(ClienteDto cliente) 
+   
+{
+        var client = new RestClient();
+        var request = new RestRequest("https://localhost:7112/api/Cliente/"+cliente.ClienteId, Method.Delete);
+        request.AddHeader("Content-Type", "application/json");
+        var response = client.Execute(request);
+        //Se elimina la serialización porque no llega respuesta
+        //if (response.Content != null)
+        //{
+        //    ciudades = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<CiudadDto>>(response.Content);
+        //    StateHasChanged();
+        //}
+
+     //constructoraDbcontex.clientes.Remove(cliente);
         //constructoraDbcontex.SaveChanges();
+
     }
+
+    
 }

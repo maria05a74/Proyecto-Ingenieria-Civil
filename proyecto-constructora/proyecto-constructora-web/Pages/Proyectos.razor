@@ -1,6 +1,9 @@
 ﻿@page "/proyectos"
 
 @using Constructora.Application.Dto
+@using Newtonsoft.Json
+@using RestSharp
+
 @inject IMatToaster Toaster
 
 <h3>Proyectos</h3>
@@ -37,8 +40,7 @@
         </tr>
     </thead>
     <tbody>
-        @*@foreach (var proyecto in constructoraDbcontex.proyectos.Include(proyecto => proyecto.TipoObra))
-         
+       @foreach (var proyecto in proyectos ??  new  List<ProyectoDto>())   
         {
             <tr>
                 <td>
@@ -75,7 +77,7 @@
             </tr>
 
 
-        }*@
+        }
 
     
 
@@ -161,6 +163,28 @@
     //public ConstructoraDbcontex constructoraDbcontex { get; set; }
     ProyectoDto proyecto = new ProyectoDto();
 
+    protected IEnumerable< ProyectoDto > proyectos = new List<ProyectoDto >();
+    ProyectoDto tipoObra = new ProyectoDto();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var client = new RestClient();
+            var request = new RestRequest("https://localhost:7112/api/Proyecto ", Method.Get);
+            request.AddHeader("Content-Type", "application/json");
+            var response = client.Execute(request);
+
+            if (response.Content != null)
+            {
+                proyectos = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable< ProyectoDto >>(response.Content);
+                StateHasChanged();
+            }
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+
 
     protected void GuardarProyecto()
     {
@@ -177,7 +201,7 @@
 
         //constructoraDbcontex.SaveChanges();
         //dialogIsOpen = false;
-        proyecto = new ProyectoDto
+     ProyectoDto   proyecto = new ProyectoDto
             {
                 TipoObraId = -1,
                 CiudadId = -1,
@@ -185,10 +209,22 @@
     }
 
     protected void EliminarProyecto(ProyectoDto proyecto)
-    {
-        //constructoraDbcontex.proyectos.Remove(proyecto);
+    
+       {
+        var client = new RestClient();
+        var request = new RestRequest("https://localhost:7112/api/Proyecto/"+proyecto.ProyectoId, Method.Delete);
+        request.AddHeader("Content-Type", "application/json");
+        var response = client.Execute(request);
+        //Se elimina la serialización porque no llega respuesta
+        //if (response.Content != null)
+        //{
+        //    proyectos = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<CiudadDto>>(response.Content);
+        //    StateHasChanged();
+        //}
+       //constructoraDbcontex.proyectos.Remove(proyecto);
         //constructoraDbcontex.SaveChanges();
-    }
+      }
+
 
     protected void ActualizarProyectos(ProyectoDto PROYECTO)
     {

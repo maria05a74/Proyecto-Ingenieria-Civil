@@ -1,10 +1,12 @@
-﻿
-@page "/TipodeCliente"
+﻿@page "/TipodeCliente"
 @using Constructora.Application.Dto
+@using Newtonsoft.Json
+@using RestSharp
+
 
 <h3>Tipos de Cliente</h3>
 <MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
-        
+
 <table class="table">
     <thead>
         <tr>
@@ -17,12 +19,13 @@
             <td>Eliminar</td>
 
             <td>Eliminar</td>
-            
+
 
         </tr>
     </thead>
     <tbody>
-        @*@foreach (var tipoCliente in constructoraDbcontex.tipoClientes)
+
+        @foreach (var tipoCliente in tipoClientes ?? new List<TipoDeClienteDto>())
         {
             <tr>
                 <td>
@@ -35,26 +38,26 @@
                     <button @onclick="()=>ActualizarTipodeCliente(tipoCliente)">Actualizar</button>
                 </td>
 
-               <td>
+                <td>
                     <button @onclick="()=>EliminarTipoCliente(tipoCliente)">Eliminar</button>
                 </td>
 
-                
-                
+
+
             </tr>
-        }*@
+        }
     </tbody>
 </table>
 <MatDialog @bind-IsOpen="@dialogIsOpen">
     <MatDialogTitle>Crear Persona</MatDialogTitle>
     <MatDialogContent>
 
-<div class ="forum-group">
-    <label for = "Nombre"> Nombre</label>
-    <input class = "form-control" id="Nueva" @bind-value = "@tipoCliente.Nombre" /> 
-</div>
+        <div class="forum-group">
+            <label for="Nombre"> Nombre</label>
+            <input class="form-control" id="Nueva" @bind-value="@tipoCliente.Nombre" />
+        </div>
 
-</MatDialogContent>
+    </MatDialogContent>
     <MatDialogActions>
         <MatButton OnClick="@(e => { dialogIsOpen = false; tipoCliente = new TipoDeClienteDto(); })">Cancelar</MatButton>
         <MatButton OnClick="@GuardarTipo">OK</MatButton>
@@ -64,48 +67,83 @@
 
 @*<button id="btnGuardar" @onclick="GuardarTipo">
     Guardar
-</button>*@
+    </button>*@
 
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 
 
 @code {
 
-protected bool dialogIsOpen { get; set; }
-
+    protected bool dialogIsOpen { get; set; }
     //[Inject]
     //public ConstructoraDbcontex constructoraDbcontex { get; set; }
+    TipoDeClienteDto tipoCliente = new TipoDeClienteDto();
 
-    TipoDeClienteDto  tipoCliente = new TipoDeClienteDto();
+    public IEnumerable<TipoDeClienteDto> tipoClientes = new List<TipoDeClienteDto>();
 
-    protected void  GuardarTipo()
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var client = new RestClient();
+            var request = new RestRequest("https://localhost:7112/api/ TipoDeCliente ", Method.Get);
+            request.AddHeader("Content-Type", "application/json");
+            var response = client.Execute(request);
+
+            if (response.Content != null)
+            {
+                tipoClientes = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<TipoDeClienteDto>>(response.Content);
+                StateHasChanged();
+            }
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+
+
+
+    protected void GuardarTipo()
     {
         //if(tipoCliente.TipoClienteId > 0)
         //    constructoraDbcontex.tipoClientes.Update(tipoCliente);
         //else
         //    constructoraDbcontex.tipoClientes.Add(tipoCliente);
-        
+
         //constructoraDbcontex.SaveChanges();
         dialogIsOpen = false;
-       tipoCliente= new TipoDeClienteDto();
+        //tipoCliente= new TipoDeClienteDto();
 
-      }
+    }
 
-    protected void EliminarTipoCliente(TipoDeClienteDto  tipoCliente) 
+    protected void EliminarTipoCliente(TipoDeClienteDto tipoCliente)
     {
+
+        var client = new RestClient();
+        var request = new RestRequest("https://localhost:7112/api/ TipoDeClienteDto/" + tipoCliente.TipoClienteId, Method.Delete);
+        request.AddHeader("Content-Type", "application/json");
+        var response = client.Execute(request);
+        //Se elimina la serialización porque no llega respuesta
+        //if (response.Content != null)
+        //{
+        //    ciudades = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<CiudadDto>>(response.Content);
+        //    StateHasChanged();
+        //}
+
         //constructoraDbcontex.tipoClientes.Remove(tipoCliente);
         //constructoraDbcontex.SaveChanges();
- }
 
- protected void ActualizarTipodeCliente(TipoDeClienteDto TIPODECLIENTE)
+    }
+
+
+    protected void ActualizarTipodeCliente(TipoDeClienteDto TIPODECLIENTE)
     {
         dialogIsOpen = true;
         tipoCliente = TIPODECLIENTE;
-  // TIPODECLIENTE es el objeto parámetro  ActualizarTipodeCliente(TipoDeCliente TIPODECLIENTE)
+        // TIPODECLIENTE es el objeto parámetro  ActualizarTipodeCliente(TipoDeCliente TIPODECLIENTE)
 
     }
 

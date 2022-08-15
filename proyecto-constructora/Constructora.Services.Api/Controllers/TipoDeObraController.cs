@@ -30,10 +30,11 @@ namespace Constructora.Services.Api.Controllers
 
         // GET api/<TipoDeObraController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public TipodeObraDto Get(int id) => new TipodeObraDto
         {
-            return "value";
-        }
+            Nombre = "vbdsgfdsg",
+            TipodeObraId = id
+        };
 
         // POST api/<TipoDeObraController>
         [HttpPost]

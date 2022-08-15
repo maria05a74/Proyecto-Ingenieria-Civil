@@ -1,6 +1,9 @@
 ﻿@page "/Departamentos"
 
 @using Constructora.Application.Dto
+@using Newtonsoft.Json
+@using RestSharp
+
 <h3>Departamentos</h3>
 
 <MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
@@ -21,7 +24,8 @@
         </tr>
     </thead>
     <tbody>
-        @*@foreach (var departamento in constructoraDbcontex.departamentos)
+
+        @foreach (var departamento in departamentos ??  new List<DepartamentoDto>())
         {
             <tr>
                 <td>
@@ -39,7 +43,7 @@
 
                 
             </tr>
-        }*@
+        }
     </tbody>
 </table>
 
@@ -69,7 +73,30 @@
 
     //[Inject]
     //public ConstructoraDbcontex constructoraDbcontex { get; set; }
+    //DepartamentoDto departamento = new DepartamentoDto();
+
+    protected IEnumerable<DepartamentoDto> departamentos = new List<DepartamentoDto>();
     DepartamentoDto departamento = new DepartamentoDto();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var client = new RestClient();
+            var request = new RestRequest("https://localhost:7112/api/Departamento ", Method.Get);
+            request.AddHeader("Content-Type", "application/json");
+            var response = client.Execute(request);
+
+            if (response.Content != null)
+            {
+                departamentos = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable< DepartamentoDto >>(response.Content);
+                StateHasChanged();
+            }
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+
 
     protected void GuardarDepartamento()
     {
@@ -82,12 +109,28 @@
         dialogIsOpen = false;
         departamento = new DepartamentoDto();
     }
+    
 
-    protected void EliminarTipodeDepartamento(DepartamentoDto departamento)
-    {
-        //constructoraDbcontex.departamentos.Remove(departamento);
+protected void EliminarTipodeDepartamento(DepartamentoDto departamento)
+ 
+{
+        var client = new RestClient();
+        var request = new RestRequest("https://localhost:7112/api/Departamento/"+departamento.DepartamentoId, Method.Delete);
+        request.AddHeader("Content-Type", "application/json");
+        var response = client.Execute(request);
+        //Se elimina la serialización porque no llega respuesta
+        //if (response.Content != null)
+        //{
+        //    departamentos = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<CiudadDto>>(response.Content);
+        //    StateHasChanged();
+        //}
+     //constructoraDbcontex.departamentos.Remove(departamento);
         //constructoraDbcontex.SaveChanges();
+
     }
+
+
+
 
     protected void ActualizarDepartamento(DepartamentoDto DEPARTAMENTO)
     {

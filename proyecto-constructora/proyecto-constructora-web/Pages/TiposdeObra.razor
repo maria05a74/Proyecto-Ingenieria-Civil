@@ -1,5 +1,8 @@
 ﻿@page "/TipoDeObra"
 @using Constructora.Application.Dto
+@using Newtonsoft.Json
+@using RestSharp
+
 
 <h3>TipodeObra</h3>
 <MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
@@ -20,7 +23,7 @@
         </tr>
     </thead>
     <tbody>
-        @*@foreach (var tipoObra in constructoraDbcontex.tipoObra)
+        @foreach (var tipoObra in tipodeObras  ?? new List<TipodeObraDto>())
         {
             <tr>
                 <td>
@@ -38,7 +41,7 @@
 
                 
             </tr>
-        }*@
+        }
     </tbody>
 </table>
 
@@ -69,11 +72,38 @@
 
 
 @code {
-    protected bool dialogIsOpen { get; set; }
+    
 
     //[Inject]
     //public ConstructoraDbcontex constructoraDbcontex { get; set; }
     TipodeObraDto tipoobra = new TipodeObraDto();
+
+    protected bool dialogIsOpen { get; set; }
+
+    protected IEnumerable<TipodeObraDto> tipodeObras  = new List<TipodeObraDto>();
+    TipodeObraDto tipoObra = new TipodeObraDto ();
+    
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var client = new RestClient();
+            var request = new RestRequest("https://localhost:7112/api/TipodeObra", Method.Get);
+            request.AddHeader("Content-Type", "application/json");
+            var response = client.Execute(request);
+
+            if (response.Content != null)
+            {
+                tipodeObras = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable< TipodeObraDto >>(response.Content);
+                StateHasChanged();
+            }
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+
+
 
     protected void GuardarTipoObra()
     {
@@ -87,11 +117,20 @@
         tipoobra = new TipodeObraDto();
     }
 
-    protected void EliminarTipodeObra(TipodeObraDto tipoobra)
+   protected void EliminarTipodeObra(TipodeObraDto tipoObra)
     {
-        //constructoraDbcontex.tipoObra.Remove(tipoobra);
-        //constructoraDbcontex.SaveChanges();
+        var client = new RestClient();
+        var request = new RestRequest("https://localhost:7112/api/TipodeObra/"+ tipoObra.TipodeObraId, Method.Delete);
+        request.AddHeader("Content-Type", "application/json");
+        var response = client.Execute(request);
+        //Se elimina la serialización porque no llega respuesta
+        //if (response.Content != null)
+        //{
+        //    tipoObras = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<CiudadDto>>(response.Content);
+        //    StateHasChanged();
+        //}
     }
+
 
     protected void ActualizarTipodeObra(TipodeObraDto tipoObra)
     {

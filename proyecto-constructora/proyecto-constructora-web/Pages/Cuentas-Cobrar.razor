@@ -1,5 +1,9 @@
 ﻿@page "/CuentasxCobrar"
 @using Constructora.Application.Dto
+@using Newtonsoft.Json
+@using RestSharp
+
+
 
 <h3>Cuentas_Cobrar</h3>
 <MatButton OnClick="@(e => { dialogIsOpen = true; })">Crear</MatButton>
@@ -40,7 +44,7 @@
     </thead
 
     <tbody>
-        @*@foreach (var cuentacobrar  in constructoraDbcontex.cuentasporCobrar)
+        @foreach (var cuentacobrar  in cuentasporCobrar ?? new List<CuentasporCobrarDto>())
         {
             <tr>
                 <td>
@@ -78,7 +82,7 @@
 
 
             </tr>
-        }*@
+        }
     </tbody>
 </table>
 <MatDialog @bind-IsOpen="@dialogIsOpen">
@@ -145,12 +149,35 @@
 
 
 @code {
-    protected bool dialogIsOpen { get; set; }
+    
 
     //[Inject]
     //public ConstructoraDbcontex constructoraDbcontex { get; set; }
+    //CuentasporCobrarDto cuentacobrar = new CuentasporCobrarDto();
 
+    protected bool dialogIsOpen { get; set; }
+    protected IEnumerable<CuentasporCobrarDto> cuentasporCobrar = new List< CuentasporCobrarDto >();
     CuentasporCobrarDto cuentacobrar = new CuentasporCobrarDto();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var client = new RestClient();
+            var request = new RestRequest("https://localhost:7112/api/CuentasporCobrar ", Method.Get);
+            request.AddHeader("Content-Type", "application/json");
+            var response = client.Execute(request);
+
+            if (response.Content != null)
+            {
+                cuentasporCobrar = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable< CuentasporCobrarDto >>(response.Content);
+                StateHasChanged();
+            }
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+
 
   protected void GuardarCuentaCobrar()
     {
@@ -166,12 +193,22 @@
 
     }
 
-    protected void EliminarCuenta(CuentasporCobrarDto  cuentacobrar) 
-    {
-        //constructoraDbcontex.cuentasporCobrar.Remove(cuentacobrar);
-        //constructoraDbcontex.SaveChanges();
-        
-    }
+   
+               protected void EliminarCuenta(CuentasporCobrarDto  cuentacobrar) 
+              {
+               var client = new RestClient();
+              var request = new RestRequest("https://localhost:7112/api/CuentasporCobrar/"+ cuentacobrar. CuentasporCobrarId, Method.Delete);
+              request.AddHeader("Content-Type", "application/json");
+              var response = client.Execute(request);
+              //Se elimina la serialización porque no llega respuesta
+             //if (response.Content != null)
+             //{
+            //    ciudades = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<CiudadDto>>(response.Content);
+            //    StateHasChanged();
+           //}
+           }
+
+
 
     protected void ActualizarCuentasCobrar(CuentasporCobrarDto tipoCuenta)
     {

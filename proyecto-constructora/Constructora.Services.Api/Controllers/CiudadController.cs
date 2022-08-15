@@ -18,7 +18,7 @@ namespace Constructora.Services.Api.Controllers
                 {
                     CiudadId = 1,
                     Nombre = "Popayán",
-                    Departamento = new DepartamentoDto
+                  Departamento = new DepartamentoDto
                     {
                         Nombre = "Cauca",
                         DepartamentoId = 1,
@@ -33,7 +33,20 @@ namespace Constructora.Services.Api.Controllers
                         Nombre = "Valle",
                         DepartamentoId = 2,
                     }
+                },
+
+                new CiudadDto
+                {
+                    CiudadId = 3,
+                    Nombre = "Chia",
+                    Departamento = new DepartamentoDto
+                    {
+                        Nombre = "Cundinamarca",
+                        DepartamentoId = 3,
+                    }
                 }
+
+
             };
 
         // GET api/<CiudadController>/5

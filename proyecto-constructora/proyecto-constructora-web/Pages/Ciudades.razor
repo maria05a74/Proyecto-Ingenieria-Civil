@@ -131,6 +131,7 @@
         base.OnAfterRender(firstRender);
     }
 
+
     protected void GuardarCiudad()
     {
         if (ciudad.Departamento == null && ciudad.DepartamentoId < 1)
@@ -157,7 +158,7 @@
         string ciudadJson = JsonConvert.SerializeObject(ciudad);
         request.AddParameter("application/json", ciudadJson,  ParameterType.RequestBody);
         
-        var response = client.Execute(request);
+        var response = client.Execute(request); // EL EXECUTE LLAMA AL BACKEND
         
 
         //if (ciudad.CiudadId > 0)
